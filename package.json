@@ -14,7 +14,6 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.0.0",
-    "@sveltejs/kit": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^3.0.0",
     "@types/eslint": "8.56.0",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
@@ -39,9 +38,7 @@
   },
   "type": "module",
   "dependencies": {
-    "bits-ui": "^0.15.1",
-    "clsx": "^2.1.0",
-    "lucide-svelte": "^0.314.0",
+    "@sveltejs/kit": "^2.5.0",
     "mode-watcher": "^0.1.2",
     "svelte": "^4.2.9",
     "tailwind-merge": "^2.2.1",
