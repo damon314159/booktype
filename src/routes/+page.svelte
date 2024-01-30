@@ -1,55 +1,59 @@
 <script lang="ts">
+  // eslint-disable-next-line import/no-duplicates
   import { tweened } from 'svelte/motion'
+  // eslint-disable-next-line import/no-duplicates
   import { cubicOut } from 'svelte/easing'
 
   const tweenedWidth = tweened(80)
   let isResizing = false
 
-  function resizable(node: HTMLElement) {
-    let mouseCurrentX: number | undefined
-    let startWidth: number
+  function resizable(node: HTMLElement): { destroy: () => void } {
+    let mouseCurrentX: number | null = null
+    let startWidth = $tweenedWidth
 
-    function handleMousemove(event: MouseEvent) {
-      if (mouseCurrentX !== undefined) {
-        const deltaX: number = event.clientX - mouseCurrentX
-        tweenedWidth
-          .set(startWidth + deltaX / 5, { duration: 0 })
-          .catch(() => {})
-        isResizing = true
-      }
-    }
-
-    function handleMouseup() {
-      if ($tweenedWidth < 60) {
-        tweenedWidth
-          .set(60, { duration: 100, easing: cubicOut })
-          .catch(() => {})
-      }
-      if ($tweenedWidth > 140) {
-        tweenedWidth
-          .set(130, { duration: 100, easing: cubicOut })
-          .catch(() => {})
-      }
-      mouseCurrentX = undefined
-      window.removeEventListener('mousemove', handleMousemove)
-      window.removeEventListener('mouseup', handleMouseup)
-      isResizing = false
-    }
-
-    function handleMousedown(event: MouseEvent) {
+    function handleMousedown(event: MouseEvent): void {
       mouseCurrentX = event.clientX
       startWidth = $tweenedWidth
-      window.addEventListener('mousemove', handleMousemove)
-      window.addEventListener('mouseup', handleMouseup)
+      isResizing = true
+    }
+
+    function handleMousemove(event: MouseEvent): void {
+      if (!isResizing || mouseCurrentX === null) {
+        return
+      }
+      const deltaX: number = event.clientX - mouseCurrentX
+      tweenedWidth.set(startWidth + deltaX / 5, { duration: 0 }).catch(() => {
+        console.log('no silent catch')
+      })
+    }
+
+    function handleMouseup(): void {
+      mouseCurrentX = null
+      if (!isResizing) {
+        return
+      }
+      isResizing = false
+      if ($tweenedWidth < 60) {
+        tweenedWidth.set(60, { duration: 100, easing: cubicOut }).catch(() => {
+          console.log('no silent catch')
+        })
+      }
+      if ($tweenedWidth > 140) {
+        tweenedWidth.set(130, { duration: 100, easing: cubicOut }).catch(() => {
+          console.log('no silent catch')
+        })
+      }
     }
 
     node.addEventListener('mousedown', handleMousedown)
+    node.addEventListener('mousemove', handleMousemove)
+    node.addEventListener('mouseup', handleMouseup)
 
     return {
       destroy() {
         node.removeEventListener('mousedown', handleMousedown)
-        window.removeEventListener('mousemove', handleMousemove)
-        window.removeEventListener('mouseup', handleMouseup)
+        node.removeEventListener('mousemove', handleMousemove)
+        node.removeEventListener('mouseup', handleMouseup)
       }
     }
   }
