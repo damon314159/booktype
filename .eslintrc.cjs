@@ -21,6 +21,7 @@ module.exports = {
   },
   rules: {
     '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/explicit-function-return-type': 'warn',
     'import/no-mutable-exports': 'off', // to dismiss `export let prop = 'default'` warning
     'no-labels': 'off',
     'no-restricted-syntax': [
