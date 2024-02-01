@@ -4,6 +4,7 @@
   // eslint-disable-next-line import/no-duplicates
   import { cubicOut } from 'svelte/easing'
   import Mode from '$lib/components/ui/mode/Mode.svelte'
+  import Game from '$lib/game/Game.svelte'
 
   const tweenedWidth = tweened(80)
   let isResizing = false
@@ -53,7 +54,7 @@
 
     function handleDoubleClick(): void {
       tweenedWidth
-        .set(80, { duration: 200, easing: cubicOut })
+        .set(80, { duration: 300, easing: cubicOut })
         .catch(handleError)
     }
 
@@ -84,41 +85,9 @@
         style="width: {$tweenedWidth}vmin;"
         class="h-[80vmin] min-w-[45vmin] max-w-[160vmin] rounded-lg border p-5 shadow-lg"
       >
-        <div class="mb-2 text-xl font-bold">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laborum,
-          porro! Vero libero dolor aspernatur tempore quo aliquam inventore!
-          Tempora itaque voluptates non ab! Numquam magnam neque distinctio
-          voluptates? Obcaecati, ab.
-        </div>
-        <div class="mb-2 text-lg font-medium">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta ipsa,
-          odio reiciendis quod, corrupti atque culpa perferendis magni incidunt
-          quidem asperiores optio nostrum dignissimos accusamus sint, facere
-          sequi a! Atque.
-        </div>
-        <div class="mb-2 text-base font-normal">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nemo
-          perspiciatis, autem dicta beatae blanditiis suscipit voluptatibus ut
-          ipsum cum fugit ullam doloremque commodi, doloribus eos mollitia.
-          Voluptatibus assumenda debitis magni.
-        </div>
-        <div class="mb-2 text-sm font-light">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem in,
-          nostrum optio quaerat aliquam rerum praesentium veritatis itaque iusto
-          quasi animi ullam nesciunt, laborum alias dolorum accusamus harum sunt
-          delectus.
-        </div>
-        <div class="mb-2 text-xs font-thin">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores,
-          porro! Doloribus quia, modi ipsum numquam quis soluta totam laborum
-          repellat voluptatem perspiciatis cumque eos! Ipsum sequi autem debitis
-          dolores voluptatem?
-        </div>
-        <div class="text-xxs font-hairline mb-2">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias eos
-          nemo amet ex praesentium a, magnam minima saepe libero quia blanditiis
-          labore id. Omnis quisquam magnam vero rem ut dolorem.
-        </div>
+        <!-- GAME COMPONENT -->
+        <Game />
+        <!-- GAME COMPONENT -->
       </div>
     </div>
     <div

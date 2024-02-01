@@ -1,11 +1,14 @@
 <script lang="ts">
   import { Button } from '$lib/components/ui/button'
   import { Sun, Moon } from 'lucide-svelte'
-
   import { toggleMode } from 'mode-watcher'
+
+  let className: string
+  // eslint-disable-next-line import/prefer-default-export
+  export { className as class }
 </script>
 
-<Button on:click={toggleMode} variant="outline" size="icon" {...$$props}>
+<Button on:click={toggleMode} variant="outline" size="icon" class={className}>
   <Sun
     class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
   />
