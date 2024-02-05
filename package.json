@@ -45,6 +45,7 @@
     "mode-watcher": "^0.1.2",
     "svelte": "^4.2.9",
     "tailwind-merge": "^2.2.1",
-    "tailwind-variants": "^0.1.20"
+    "tailwind-variants": "^0.1.20",
+    "vaul-svelte": "^0.2.1"
   }
 }
