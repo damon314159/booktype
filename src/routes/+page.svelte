@@ -8,7 +8,8 @@
 
   const tweenedWidth = tweened(80)
   let isResizing = false
-  let setCaret: (hide?: boolean) => void
+  let resetCaret: () => void
+  let hideCaret: () => void
 
   function resizable(node: HTMLElement): { destroy: () => void } {
     let mouseCurrentX: number | null = null
@@ -30,11 +31,10 @@
         return
       }
       const deltaX: number = event.clientX - mouseCurrentX
+      hideCaret()
       tweenedWidth
         .set(startWidth + deltaX / 5, { duration: 0 })
-        .then(() => {
-          setCaret()
-        })
+        .then(resetCaret)
         .catch(handleError)
     }
 
@@ -45,31 +45,25 @@
       }
       isResizing = false
       if ($tweenedWidth < 60) {
-        setCaret(true)
+        hideCaret()
         tweenedWidth
           .set(60, { duration: 100, easing: cubicOut })
-          .then(() => {
-            setCaret()
-          })
+          .then(resetCaret)
           .catch(handleError)
       }
       if ($tweenedWidth > 140) {
-        setCaret(true)
+        hideCaret()
         tweenedWidth
           .set(130, { duration: 100, easing: cubicOut })
-          .then(() => {
-            setCaret()
-          })
+          .then(resetCaret)
           .catch(handleError)
       }
     }
     function handleDoubleClick(): void {
-      setCaret(true)
+      hideCaret()
       tweenedWidth
         .set(80, { duration: 300, easing: cubicOut })
-        .then(() => {
-          setCaret()
-        })
+        .then(resetCaret)
         .catch(handleError)
     }
 
@@ -103,7 +97,7 @@
         class="h-[80vmin] min-w-[45vmin] max-w-[160vmin] rounded-lg border p-5 shadow-lg"
       >
         <!-- GAME COMPONENT -->
-        <Game bind:setCaret />
+        <Game bind:hideCaret bind:resetCaret />
         <!-- GAME COMPONENT -->
       </div>
     </div>

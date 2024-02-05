@@ -1,7 +1,24 @@
 <script lang="ts">
+  /**
+-better colors
+-animated colors
+-animated caret
+
+things left for the prototype to be done:
+-caret should move when resizing.
+-handle space (currently space does nothing)
+-handle backspace (delete to fix a word)
+
+things for second version of prototype:
+-handle wrong words and letters
+-underline wrong words
+-scoring
+*/
+
   import { onMount } from 'svelte'
   // eslint-disable-next-line import/prefer-default-export
-  export let setCaret: (hide?: boolean) => void
+  export let resetCaret: () => void
+  export let hideCaret: () => void
 
   const text =
     "There was something in the sky. What exactly was up there wasn't immediately clear. But there was definitely something in the sky and it was getting bigger and bigger."
@@ -25,17 +42,15 @@
     caretEl.classList.remove('hidden')
   })
 
-  setCaret = (isHidden?: boolean): void => {
+  hideCaret = (): void => {
+    caretEl.classList.add('hidden')
+  }
+
+  resetCaret = (): void => {
     letterEl = wordsEl.children[wordIndex].children[
       letterIndex
     ] as HTMLSpanElement
 
-    if (isHidden) {
-      caretEl.classList.add('hidden')
-      return
-    }
-
-    caretEl.classList.add('hidden')
     caretElTop = letterEl.offsetTop
     caretElLeft = letterEl.offsetLeft
     caretEl.classList.remove('hidden')
