@@ -1,22 +1,6 @@
 <script lang="ts">
-  /**
--better colors
--animated colors
--animated caret
-
-things left for the prototype to be done:
--caret should move when resizing.
--handle space (currently space does nothing)
--handle backspace (delete to fix a word)
-
-things for second version of prototype:
--handle wrong words and letters
--underline wrong words
--scoring
-*/
-
   import { onMount } from 'svelte'
-  // eslint-disable-next-line import/prefer-default-export
+
   export let resetCaret: () => void
   export let hideCaret: () => void
 
@@ -33,30 +17,36 @@ things for second version of prototype:
   let wordIndex = 0
   let letterIndex = 0
 
-  onMount(() => {
-    letterEl = wordsEl.children[wordIndex].children[
-      letterIndex
-    ] as HTMLSpanElement
-    caretElTop = letterEl.offsetTop
-    caretElLeft = letterEl.offsetLeft
-    caretEl.classList.remove('hidden')
-  })
+  function setLetterEl(): void {
+    letterEl = wordsEl.children[wordIndex].children[letterIndex] as HTMLSpanElement
+  }
 
+  // Caret functions
+  // TODO Replace with a store
   hideCaret = (): void => {
     caretEl.classList.add('hidden')
   }
 
   resetCaret = (): void => {
-    letterEl = wordsEl.children[wordIndex].children[
-      letterIndex
-    ] as HTMLSpanElement
-
+    setLetterEl()
     caretElTop = letterEl.offsetTop
     caretElLeft = letterEl.offsetLeft
     caretEl.classList.remove('hidden')
   }
 
   function game(node: HTMLInputElement): { destroy: () => void } {
+    function moveCaret(direction: 'forward' | 'backward' = 'forward'): void {
+      const offset = 4
+      if (direction === 'forward') {
+        caretElTop = letterEl.offsetTop + offset
+        caretElLeft = letterEl.offsetLeft + letterEl.offsetWidth
+      }
+      if (direction === 'backward') {
+        caretElTop = letterEl.offsetTop + offset
+        caretElLeft = letterEl.offsetLeft
+      }
+    }
+
     function updateGameState(): void {
       function setLetter(): void {
         const isWordCompleted = letterIndex > words[wordIndex].length - 1
@@ -65,20 +55,16 @@ things for second version of prototype:
           wordIndex += 1
           letterIndex = 0
         }
-
-        letterEl = wordsEl.children[wordIndex].children[
-          letterIndex
-        ] as HTMLSpanElement
+        setLetterEl()
       }
 
-      function moveCaret(): void {
-        const offset = 4
-        caretElTop = letterEl.offsetTop + offset
-        caretElLeft = letterEl.offsetLeft + letterEl.offsetWidth
-      }
-
-      function checkLetter(): void {
+      function checkLetter(direction: 'forward' | 'backward' = 'forward'): void {
         const currentLetter = words[wordIndex][letterIndex]
+
+        if (direction === 'backward') {
+          letterEl.classList.remove('dark:text-white', 'text-black')
+          letterEl.classList.remove('dark:text-red-400', 'text-red-600')
+        }
 
         if (inputElValue === currentLetter) {
           letterEl.classList.add('dark:text-white', 'text-black')
@@ -91,7 +77,6 @@ things for second version of prototype:
 
       function nextLetter(): void {
         letterIndex += 1
-        moveCaret()
       }
 
       function resetLetter(): void {
@@ -102,6 +87,7 @@ things for second version of prototype:
       checkLetter()
       resetLetter()
       nextLetter()
+      moveCaret()
     }
 
     function handleInput(): void {
@@ -111,10 +97,38 @@ things for second version of prototype:
       }
     }
 
+    function handleBackspace(): void {
+      if (letterIndex > 0) {
+        letterIndex -= 1
+        setLetterEl()
+        moveCaret('backward')
+        letterEl.classList.remove('dark:text-white', 'text-black')
+        letterEl.classList.remove('dark:text-red-400', 'text-red-600')
+      }
+      if (letterIndex === 0) {
+        if (wordIndex > 0) {
+          wordIndex -= 1
+          letterIndex = words[wordIndex].length
+          setLetterEl()
+          moveCaret('forward')
+          letterEl.classList.remove('dark:text-white', 'text-black')
+          letterEl.classList.remove('dark:text-red-400', 'text-red-600')
+        }
+      }
+    }
+
     function handleKeydown(event: KeyboardEvent): void {
       if (event.key === ' ') {
         event.preventDefault()
       }
+
+      if (event.key === 'Backspace') {
+        handleBackspace()
+      }
+      if (event.key) {
+        console.log('keyboard Event:', wordIndex, '<- WI LI ->', letterIndex)
+      }
+      node.focus()
     }
 
     function handleFocus(): void {
@@ -128,19 +142,26 @@ things for second version of prototype:
     node.addEventListener('focus', handleFocus)
     node.addEventListener('blur', handleBlur)
     node.addEventListener('input', handleInput)
-    node.addEventListener('keydown', handleKeydown)
+    document.addEventListener('keydown', handleKeydown)
     return {
       destroy(): void {
         node.removeEventListener('focus', handleFocus)
         node.removeEventListener('blur', handleBlur)
         node.removeEventListener('input', handleInput)
-        node.removeEventListener('keydown', handleKeydown)
+        document.removeEventListener('keydown', handleKeydown)
       }
     }
   }
+
+  onMount(() => {
+    setLetterEl()
+    caretElTop = letterEl.offsetTop
+    caretElLeft = letterEl.offsetLeft
+    caretEl.classList.remove('hidden')
+  })
 </script>
 
-<input use:game type="text" class="" />
+<input use:game type="text" class="absolute h-0 w-0 opacity-0" />
 <div
   bind:this={wordsEl}
   class="mb-2 text-justify text-2xl font-bold text-gray-400 dark:text-gray-600"

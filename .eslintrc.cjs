@@ -20,16 +20,13 @@ module.exports = {
     extraFileExtensions: ['.svelte']
   },
   rules: {
+    'no-param-reassign': 'off',
     '@typescript-eslint/no-unused-vars': 'warn',
     '@typescript-eslint/explicit-function-return-type': 'warn',
+    'import/prefer-default-export': 'off',
     'import/no-mutable-exports': 'off', // to dismiss `export let prop = 'default'` warning
     'no-labels': 'off',
-    'no-restricted-syntax': [
-      'error',
-      'ForInStatement',
-      'ForOfStatement',
-      'WithStatement'
-    ] // remove LabeledStatement from the list
+    'no-restricted-syntax': ['error', 'ForInStatement', 'ForOfStatement', 'WithStatement'] // remove LabeledStatement from the list
   },
   env: {
     browser: true,
